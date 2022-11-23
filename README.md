@@ -832,11 +832,11 @@ It is useful if you only want to call a debug command and don't want to stop the
 ```
 def initialize
   @a = 1
-  binding.b do: 'watch @a'
+  binding.b do: 'info ;; watch @a'
 end
 ```
 
-On this case, register a watch breakpoint for `@a` and continue to run.
+On this case, execute the `info` command then register a watch breakpoint for `@a` and continue to run.
 
 If `pre: 'command'` is specified, the debugger suspends the program and run the `command` as a debug command, and keep suspend.
 It is useful if you have operations before suspend.
@@ -849,6 +849,22 @@ end
 ```
 
 On this case, you can see the result of `bar()` every time you stop there.
+
+You can use `pre` and `do` together to create more useful workflows.
+
+```
+def initialize
+  @a = 1
+  binding.b do: 'watch @a ;; break foo pre: info'
+  foo
+end
+
+def foo
+  ...
+end
+```
+
+In this case, the debugger suspends the program and registers a watch breakpoint for `@a`, creates a breakpoint at `foo` and continues the program to the breakpoint at `foo`, suspends the program and runs the `info` command from inside `foo`, and stays suspended. 
 
 ## rdbg command help
 
